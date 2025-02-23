@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego de Preguntas y Respuestas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .pregunta {
+            margin-bottom: 20px;
+        }
+        .opciones {
+            display: flex;
+            flex-direction: column;
+        }
+        .opcion {
+            margin: 5px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .opcion:hover {
+            background-color: #f9f9f9;
+        }
+        .opcion.correcta {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+        .opcion.incorrecta {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+        .resultado {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #333;
+        }
+        button {
+            display: block;
+            margin: 20px auto 0;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Juego de Preguntas y Respuestas</h1>
+        <div id="preguntas"></div>
+        <div class="resultado" id="resultado"></div>
+        <button id="siguiente" onclick="siguientePregunta()">Siguiente</button>
+    </div>
+
+    <script>
+        // Preguntas y respuestas
+        const preguntas = [
+            {
+                pregunta: "¿Cuál es la capital de Francia?",
+                opciones: ["Madrid", "París", "Berlín", "Roma"],
+                respuestaCorrecta: "París"
+            },
+            {
+                pregunta: "¿Cuántos planetas hay en el sistema solar?",
+                opciones: ["7", "8", "9", "10"],
+                respuestaCorrecta: "8"
+            },
+            {
+                pregunta: "¿Quién escribió 'Cien años de soledad'?",
+                opciones: ["Gabriel García Márquez", "Pablo Neruda", "Julio Cortázar", "Mario Vargas Llosa"],
+                respuestaCorrecta: "Gabriel García Márquez"
+            },
+            {
+                pregunta: "¿Cuál es el río más largo del mundo?",
+                opciones: ["Nilo", "Amazonas", "Yangtsé", "Misisipi"],
+                respuestaCorrecta: "Amazonas"
+            },
+            {
+                pregunta: "¿En qué año llegó el hombre a la Luna?",
+                opciones: ["1965", "1969", "1972", "1980"],
+                respuestaCorrecta: "1969"
+            },
+            {
+                pregunta: "¿Cuál es el elemento químico con símbolo 'O'?",
+                opciones: ["Oro", "Oxígeno", "Osmio", "Oganesón"],
+                respuestaCorrecta: "Oxígeno"
+            },
+            {
+                pregunta: "¿Quién pintó 'La noche estrellada'?",
+                opciones: ["Pablo Picasso", "Vincent van Gogh", "Claude Monet", "Salvador Dalí"],
+                respuestaCorrecta: "Vincent van Gogh"
+            },
+            {
+                pregunta: "¿Cuál es el país más grande del mundo por área?",
+                opciones: ["Canadá", "China", "Rusia", "Estados Unidos"],
+                respuestaCorrecta: "Rusia"
+            },
+            {
+                pregunta: "¿Cuál es el océano más grande del mundo?",
+                opciones: ["Atlántico", "Índico", "Pacífico", "Ártico"],
+                respuestaCorrecta: "Pacífico"
+            },
+            {
+                pregunta: "¿Quién fue el primer presidente de los Estados Unidos?",
+                opciones: ["Thomas Jefferson", "George Washington", "Abraham Lincoln", "John Adams"],
+                respuestaCorrecta: "George Washington"
+            }
+        ];
+
+        let preguntaActual = 0;
+        let puntuacion = 0;
+
+        // Función para mostrar la pregunta actual
+        function mostrarPregunta() {
+            const pregunta = preguntas[preguntaActual];
+            const preguntasDiv = document.getElementById('preguntas');
+            preguntasDiv.innerHTML = `
+                <div class="pregunta">
+                    <h3>${pregunta.pregunta}</h3>
+                    <div class="opciones">
+                        ${pregunta.opciones.map(opcion => `
+                            <div class="opcion" onclick="seleccionarRespuesta('${opcion}')">${opcion}</div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Función para seleccionar una respuesta
+        function seleccionarRespuesta(opcionSeleccionada) {
+            const pregunta = preguntas[preguntaActual];
+            const opciones = document.querySelectorAll('.opcion');
+            opciones.forEach(opcion => {
+                opcion.onclick = null; // Deshabilitar más clics
+                if (opcion.textContent === pregunta.respuestaCorrecta) {
+                    opcion.classList.add('correcta');
+                } else if (opcion.textContent === opcionSeleccionada) {
+                    opcion.classList.add('incorrecta');
+                }
+            });
+
+            if (opcionSeleccionada === pregunta.respuestaCorrecta) {
+                puntuacion++;
+            }
+        }
+
+        // Función para pasar a la siguiente pregunta
+        function siguientePregunta() {
+            preguntaActual++;
+            if (preguntaActual < preguntas.length) {
+                mostrarPregunta();
+            } else {
+                mostrarResultado();
+            }
+        }
+
+        // Función para mostrar el resultado final
+        function mostrarResultado() {
+            const preguntasDiv = document.getElementById('preguntas');
+            preguntasDiv.innerHTML = '';
+            const resultadoDiv = document.getElementById('resultado');
+            resultadoDiv.textContent = `Tu puntuación final es: ${puntuacion} de ${preguntas.length}`;
+            document.getElementById('siguiente').style.display = 'none';
+        }
+
+        // Mostrar la primera pregunta al cargar la página
+        mostrarPregunta();
+    </script>
+</body>
+</html>
